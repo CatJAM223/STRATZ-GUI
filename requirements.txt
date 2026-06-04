@@ -3,3 +3,5 @@ uvicorn
 httpx
 pydantic-settings
 pydantic
+PyQt6
+keyboard

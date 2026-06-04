@@ -1,18 +1,26 @@
 from pydantic import BaseModel, computed_field
 from typing import Optional
 
+
 class PlayerSchemas(BaseModel):
-    steamAccountId: int
-    name: Optional[str]
-    avatar: Optional[str]
-    countryCode: Optional[str]
-    matchCount: Optional[int]
-    winCount: Optional[int] 
-    behaviorScore: Optional[int] 
+    steamAccountId: Optional[int] = None
+    name: Optional[str] = None
+    avatar: Optional[str] = None
+    countryCode: Optional[str] = None
+    matchCount: Optional[int] = None
+    winCount: Optional[int] = None
+    behaviorScore: Optional[int] = None
     
     @computed_field
     @property
     def winrate(self) -> Optional[float]:
         if self.matchCount and self.winCount and self.matchCount > 0:
             return round(self.winCount / self.matchCount * 100, 1)
+        return None
+    
+    @computed_field
+    @property
+    def losses(self) -> Optional[int]:
+        if self.matchCount and self.winCount:
+            return self.matchCount - self.winCount
         return None

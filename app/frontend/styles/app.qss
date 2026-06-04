@@ -1,0 +1,53 @@
+QWidget {
+    background: transparent;
+    color: #E8EAF0;
+    font-family: 'Segoe UI', 'Inter', sans-serif;
+}
+
+#Glass {
+    background: qlineargradient(x1:0, y1:0, x2:1, y2:1,
+        stop:0 rgba(18, 20, 25, 245),
+        stop:1 rgba(12, 14, 18, 250));
+    border: 1px solid rgba(255,255,255,12);
+    border-radius: 24px;
+}
+
+QLineEdit {
+    background: rgba(25, 28, 35, 200);
+    border-radius: 14px;
+    padding: 14px 16px;
+    border: 1px solid rgba(255,255,255,10);
+    font-size: 14px;
+    color: #E8EAF0;
+}
+
+QLineEdit:hover {
+    background: rgba(30, 34, 42, 220);
+    border: 1px solid rgba(79, 140, 255, 30);
+}
+
+QLineEdit:focus {
+    border: 1px solid #4F8CFF;
+    background: rgba(30, 34, 42, 240);
+}
+
+QScrollBar:vertical {
+    background: rgba(25, 28, 35, 100);
+    border-radius: 8px;
+    width: 6px;
+    margin: 0px;
+}
+
+QScrollBar::handle:vertical {
+    background: #4F8CFF;
+    border-radius: 8px;
+    min-height: 30px;
+}
+
+QScrollBar::handle:vertical:hover {
+    background: #6EA8FF;
+}
+
+QScrollBar::add-line:vertical, QScrollBar::sub-line:vertical {
+    height: 0px;
+}
