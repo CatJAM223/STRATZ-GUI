@@ -63,6 +63,11 @@ class ApiClient(QObject):
             if "Сервер работает исправно" in str(response_data):
                 # Это ответ health check, обрабатывается в ApiChecker
                 return response_data
+
+            if status_code and int(status_code) >= 400:
+                detail = response_data.get("detail", "Unknown server error")
+                self.errorOccurred.emit(f"Server error ({status_code}): {detail}")
+                return
             
             # Это ответ от player endpoint
             self._process_player_data(response_data)
@@ -82,7 +87,6 @@ class ApiClient(QObject):
             "losses": data.get("losses", 0),  # computed field из схемы
             "winrate": data.get("winrate", "0%"),  # computed field из схемы
             "hero": "Unknown",  # API не возвращает топ героя
-            "kda": "0.0",  # API не возвращает KDA
             "region": data.get("countryCode", "Unknown"),
             "avatar": data.get("avatar", ""),
             "behavior_score": data.get("behaviorScore", 0)

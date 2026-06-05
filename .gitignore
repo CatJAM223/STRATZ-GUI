@@ -37,3 +37,8 @@ Thumbs.db
 # Project specific (если нужно)
 *.db
 *.sqlite
+settings.json
+
+# Rust
+launcher/target/
+launcher/tools/

@@ -13,8 +13,8 @@ class TitleBar(QWidget):
         layout = QHBoxLayout(self)
         layout.setContentsMargins(20, 14, 20, 14)
 
-        self.title = QLabel("PLAYER STATS OVERLAY")
-        self.title.setStyleSheet("color:#6B7280; font-weight: 600; font-size: 11px; letter-spacing: 2px;")
+        self.title = QLabel("STRATZ OVERLAY")
+        self.title.setStyleSheet("color:#6B7280; font-family: 'Bahnschrift'; font-weight: 600; font-size: 11px; letter-spacing: 2px;")
 
         # Window controls
         controls_layout = QHBoxLayout()

@@ -1,9 +1,8 @@
 from PyQt6.QtWidgets import QWidget, QVBoxLayout, QLineEdit, QLabel, QHBoxLayout
 from PyQt6.QtCore import pyqtSignal, Qt
-from PyQt6.QtGui import QFont
-
 from ui.animated_button import AnimatedButton
 from styles.theme import Theme
+from styles.fonts import display_font
 
 
 class SearchPage(QWidget):
@@ -23,16 +22,13 @@ class SearchPage(QWidget):
         title_container = QHBoxLayout()
         title_container.setAlignment(Qt.AlignmentFlag.AlignCenter)
         
-        subtitle = QLabel("PLAYER STATS OVERLAY")
-        subtitle_font = QFont()
-        subtitle_font.setPointSize(13)
-        subtitle_font.setBold(True)
-        subtitle.setFont(subtitle_font)
+        subtitle = QLabel("STRATZ OVERLAY")
+        subtitle.setFont(display_font(13, bold=True))
         subtitle.setAlignment(Qt.AlignmentFlag.AlignCenter)
         subtitle.setStyleSheet(f"color: {Theme.ACCENT}; letter-spacing: 4px;")
 
         self.input = QLineEdit()
-        self.input.setPlaceholderText("Enter player nickname...")
+        self.input.setPlaceholderText("Enter Steam ID (e.g. 76561198356190078)...")
         self.input.returnPressed.connect(self.emit_search)
 
         # Кнопки в ряд
@@ -40,7 +36,7 @@ class SearchPage(QWidget):
         buttons_layout.setSpacing(12)
         
         self.search_btn = AnimatedButton("SEARCH", "primary")
-        self.check_api_btn = AnimatedButton("CHECK API STATS", "secondary")
+        self.check_api_btn = AnimatedButton("CHECK API STRATZ", "secondary")
         self.settings_btn = AnimatedButton("⚙ SETTINGS", "secondary")
 
         self.search_btn.clicked.connect(self.emit_search)

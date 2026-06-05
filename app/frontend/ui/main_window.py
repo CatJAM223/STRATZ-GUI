@@ -10,6 +10,7 @@ from ui.settings_overlay import SettingsOverlay
 
 from services.api_client import ApiClient
 from services.api_checker import ApiChecker
+from services.hotkey_manager import HotkeyManager
 
 
 class MainWindow(QMainWindow):
@@ -49,8 +50,11 @@ class MainWindow(QMainWindow):
         self.loading_overlay = LoadingOverlay(self)
         self.loading_overlay.hide()
         
+        # Global hotkey manager (Windows RegisterHotKey)
+        self.hotkey_manager = HotkeyManager(self)
+
         # Settings overlay
-        self.settings_overlay = SettingsOverlay(self)
+        self.settings_overlay = SettingsOverlay(self, self.hotkey_manager)
 
         # API - подключение к вашему бэкенду
         backend_url = "http://localhost:8001"  # Ваш FastAPI сервер
@@ -74,6 +78,10 @@ class MainWindow(QMainWindow):
         
         # Settings signals
         self.settings_overlay.closed.connect(self.on_settings_closed)
+
+        # Register global hotkey after window is shown
+        self.hotkey_manager.toggled.connect(self.toggle_visibility)
+        QTimer.singleShot(0, lambda: self.hotkey_manager.attach_to_window(self))
 
     def resizeEvent(self, event):
         """Center the loading overlay when window resizes"""
@@ -154,8 +162,8 @@ class MainWindow(QMainWindow):
         self.stack.setCurrentWidget(self.player_page)
 
     def refresh(self):
-        if hasattr(self.player_page, 'current_name') and self.player_page.current_name:
-            self.search_player(self.player_page.current_name)
+        if hasattr(self.player_page, 'current_steam_id') and self.player_page.current_steam_id:
+            self.search_player(str(self.player_page.current_steam_id))
     
     def back_to_search(self):
         self.stack.setCurrentWidget(self.search_page)
@@ -177,11 +185,8 @@ class MainWindow(QMainWindow):
         )
         
         if reply == QMessageBox.StandardButton.Yes:
-            try:
-                import keyboard
-                keyboard.unhook_all()
-            except:
-                pass
+            if hasattr(self, 'hotkey_manager'):
+                self.hotkey_manager.unregister()
             if hasattr(self, 'settings_overlay'):
                 self.settings_overlay.close()
             event.accept()

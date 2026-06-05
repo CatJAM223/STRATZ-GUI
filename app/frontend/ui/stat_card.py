@@ -2,6 +2,7 @@ from PyQt6.QtWidgets import QWidget, QLabel, QVBoxLayout, QGraphicsDropShadowEff
 from PyQt6.QtCore import QPropertyAnimation, QEasingCurve, Qt
 from PyQt6.QtGui import QColor
 from styles.theme import Theme
+from styles.fonts import display_font, value_font, FONT_FAMILY
 
 
 class StatCard(QWidget):
@@ -13,13 +14,13 @@ class StatCard(QWidget):
         layout.setSpacing(8)
 
         self.title_label = QLabel(title)
-        self.title_label.setStyleSheet(f"color: {Theme.MUTED}; font-size: 11px; letter-spacing: 1px;")
+        self.title_label.setFont(display_font(11))
+        self.title_label.setStyleSheet(f"color: {Theme.MUTED}; font-family: '{FONT_FAMILY}';")
         
         self.value_label = QLabel("---")
-        self.value_label.setStyleSheet(f"color: {Theme.TEXT}; font-size: 26px; font-weight: bold;")
-        
-        if title == "WINRATE":
-            self.value_label.setStyleSheet(f"color: {Theme.SUCCESS}; font-size: 26px; font-weight: bold;")
+        self.value_label.setFont(value_font(26))
+        value_color = Theme.SUCCESS if title == "WINRATE" else Theme.TEXT
+        self.value_label.setStyleSheet(f"color: {value_color}; font-family: '{FONT_FAMILY}';")
 
         layout.addWidget(self.title_label)
         layout.addWidget(self.value_label)

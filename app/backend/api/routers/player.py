@@ -13,4 +13,7 @@ async def get_player(steam_id: int):
 
 @router.post("/test/{steam_id:int}", response_model=PlayerSchemas)
 async def test(steam_id: int):
-    return await Statz_service.get_by_id(steam_id)
+    result = await Statz_service.get_by_id(steam_id)
+    if not result:
+        raise HTTPException(status_code=404, detail="Player not found")
+    return result

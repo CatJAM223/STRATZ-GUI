@@ -1,5 +1,5 @@
 from app.backend.core.config import settings
-from app.backend.services.convector import convector_id
+from app.backend.services.convector import normalize_steam_id
 import httpx
 from app.backend.core.constants import STRATZ_API_URL
 
@@ -7,9 +7,10 @@ from app.backend.core.constants import STRATZ_API_URL
 class Statz_service:
     @staticmethod
     async def get_by_id(steam_id: int):
+        account_id = normalize_steam_id(steam_id)
         query = f"""
             query {{
-                player(steamAccountId: {steam_id:}) {{
+                player(steamAccountId: {account_id}) {{
                     steamAccountId
                     matchCount
                     winCount
@@ -31,16 +32,22 @@ class Statz_service:
             "Content-Type": "application/json"
         }
 
-        async with httpx.AsyncClient() as client:
+        async with httpx.AsyncClient(timeout=15.0) as client:
             response = await client.post(STRATZ_API_URL, json={"query": query}, headers=headers)
         
         if response.status_code != 200:
             return None
             
         data = response.json()
-        
-        player = data.get("data", {}).get("player", {})
-        steam_account = player.get("steamAccount", {})
+
+        if data.get("errors"):
+            return None
+
+        player = data.get("data", {}).get("player")
+        if not player or player.get("matchCount") is None:
+            return None
+
+        steam_account = player.get("steamAccount") or {}
         
         return {
             "steamAccountId": player.get("steamAccountId"),

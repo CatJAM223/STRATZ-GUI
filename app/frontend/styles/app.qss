@@ -1,7 +1,7 @@
 QWidget {
     background: transparent;
     color: #E8EAF0;
-    font-family: 'Segoe UI', 'Inter', sans-serif;
+    font-family: 'Bahnschrift', 'Segoe UI', sans-serif;
 }
 
 #Glass {

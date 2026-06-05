@@ -1,18 +1,10 @@
 from PyQt6.QtWidgets import QWidget, QVBoxLayout, QGridLayout, QLabel, QScrollArea, QHBoxLayout
 from PyQt6.QtCore import pyqtSignal, Qt, QTimer
-from PyQt6.QtGui import QFont
-
 from ui.stat_card import StatCard
 from ui.animated_button import AnimatedButton
-from styles.theme import Theme
-from PyQt6.QtWidgets import QWidget, QVBoxLayout, QGridLayout, QLabel, QScrollArea, QHBoxLayout
-from PyQt6.QtCore import pyqtSignal, Qt, QTimer
-from PyQt6.QtGui import QFont
-
-from ui.stat_card import StatCard
-from ui.animated_button import AnimatedButton
-from styles.theme import Theme
 from ui.image_loader import ImageLoader
+from styles.theme import Theme
+from styles.fonts import heading_font
 
 class PlayerCardPage(QWidget):
 
@@ -24,6 +16,7 @@ class PlayerCardPage(QWidget):
         super().__init__()
 
         self.current_name = ""
+        self.current_steam_id = None
 
         main_layout = QVBoxLayout(self)
         main_layout.setSpacing(20)
@@ -52,10 +45,7 @@ class PlayerCardPage(QWidget):
         self.avatar.setStyleSheet("border-radius: 40px; background: #161922;")
         
         self.name_label = QLabel("Player")
-        name_font = QFont()
-        name_font.setPointSize(26)
-        name_font.setBold(True)
-        self.name_label.setFont(name_font)
+        self.name_label.setFont(heading_font(26))
         self.name_label.setStyleSheet(f"""
             color: {Theme.TEXT};
             background: transparent;
@@ -64,7 +54,6 @@ class PlayerCardPage(QWidget):
         header_layout.addWidget(self.avatar)
         header_layout.addWidget(self.name_label)
 
-        # Stats grid - убрали MMR, добавим другие статы
         grid = QGridLayout()
         grid.setSpacing(14)
         grid.setContentsMargins(0, 0, 0, 0)
@@ -75,12 +64,10 @@ class PlayerCardPage(QWidget):
             "losses": StatCard("LOSSES"),
             "winrate": StatCard("WINRATE"),
             "hero": StatCard("TOP HERO"),
-            "kda": StatCard("KDA"),
             "region": StatCard("REGION"),
         }
 
-        # Перестроим сетку (3 колонки для 7 карточек)
-        positions = [(0,0), (0,1), (0,2), (1,0), (1,1), (1,2), (2,0)]
+        positions = [(0, 0), (0, 1), (0, 2), (1, 0), (1, 1), (1, 2)]
         for (key, card), (row, col) in zip(self.cards.items(), positions):
             grid.addWidget(card, row, col)
 
@@ -113,6 +100,7 @@ class PlayerCardPage(QWidget):
         self.closeRequested.emit()
 
     def set_player_data(self, data):
+        self.current_steam_id = data.get("steam_id")
         self.current_name = data.get("nickname", "")
         self.name_label.setText(self.current_name)
         
