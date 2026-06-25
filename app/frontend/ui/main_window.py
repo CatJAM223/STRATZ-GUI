@@ -18,7 +18,6 @@ class MainWindow(QMainWindow):
     def __init__(self):
         super().__init__()
 
-        # OVERLAY FLAGS
         self.setWindowFlags(
             Qt.WindowType.FramelessWindowHint |
             Qt.WindowType.WindowStaysOnTopHint |
@@ -29,7 +28,6 @@ class MainWindow(QMainWindow):
 
         self.resize(950, 700)
 
-        # ROOT
         self.container = GlassContainer(self)
 
         self.title_bar = TitleBar(self)
@@ -45,46 +43,36 @@ class MainWindow(QMainWindow):
         self.container.layout.addWidget(self.stack)
 
         self.setCentralWidget(self.container)
-
-        # Loading overlay
         self.loading_overlay = LoadingOverlay(self)
-        self.loading_overlay.hide()
         
-        # Global hotkey manager (Windows RegisterHotKey)
+        self.loading_overlay.hide()
         self.hotkey_manager = HotkeyManager(self)
-
-        # Settings overlay
+        
         self.settings_overlay = SettingsOverlay(self, self.hotkey_manager)
-
-        # API - подключение к вашему бэкенду
-        backend_url = "http://localhost:8001"  # Ваш FastAPI сервер
+        backend_url = "http://localhost:8001"
+        
         self.api = ApiClient(backend_url)
         self.api_checker = ApiChecker(backend_url)
-
-        # signals
+        
         self.search_page.searchRequested.connect(self.search_player)
         self.search_page.checkApiRequested.connect(self.check_api_stats)
+        
         self.search_page.settingsRequested.connect(self.show_settings)
-        
         self.api.playerLoaded.connect(self.on_player_loaded)
-        self.api.errorOccurred.connect(self.show_error)
         
+        self.api.errorOccurred.connect(self.show_error)
         self.api_checker.resultReady.connect(self.on_api_check_result)
-
-        # Navigation
+        
         self.player_page.closeRequested.connect(self.close)
         self.player_page.refreshRequested.connect(self.refresh)
-        self.player_page.backToSearchRequested.connect(self.back_to_search)
         
-        # Settings signals
+        self.player_page.backToSearchRequested.connect(self.back_to_search)
         self.settings_overlay.closed.connect(self.on_settings_closed)
 
-        # Register global hotkey after window is shown
         self.hotkey_manager.toggled.connect(self.toggle_visibility)
         QTimer.singleShot(0, lambda: self.hotkey_manager.attach_to_window(self))
 
     def resizeEvent(self, event):
-        """Center the loading overlay when window resizes"""
         super().resizeEvent(event)
         if hasattr(self, 'loading_overlay'):
             x = (self.width() - self.loading_overlay.width()) // 2
@@ -104,7 +92,7 @@ class MainWindow(QMainWindow):
             self.settings_overlay.update_status_label()
 
     def search_player(self, nickname):
-        """Поиск игрока по Steam ID или нику"""
+        """Поиск игрока по Steam ID"""
         if self.stack.currentWidget() == self.player_page:
             self.search_page.input.clear()
         
@@ -157,6 +145,7 @@ class MainWindow(QMainWindow):
         pass
 
     def on_player_loaded(self, data):
+        """Обработка загрузки данных игрока"""
         self.loading_overlay.hide_with_animation()
         self.player_page.set_player_data(data)
         self.stack.setCurrentWidget(self.player_page)

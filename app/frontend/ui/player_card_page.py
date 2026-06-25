@@ -35,7 +35,6 @@ class PlayerCardPage(QWidget):
         layout = QVBoxLayout(content)
         layout.setSpacing(24)
 
-        # Player header with avatar and name
         header_layout = QHBoxLayout()
         header_layout.setAlignment(Qt.AlignmentFlag.AlignCenter)
         header_layout.setSpacing(20)
@@ -63,7 +62,7 @@ class PlayerCardPage(QWidget):
             "wins": StatCard("WINS"),
             "losses": StatCard("LOSSES"),
             "winrate": StatCard("WINRATE"),
-            "hero": StatCard("TOP HERO"),
+            "hero": StatCard("TOP HERO"),  # Здесь будет один герой
             "region": StatCard("REGION"),
         }
 
@@ -96,7 +95,6 @@ class PlayerCardPage(QWidget):
         main_layout.addWidget(scroll)
 
     def _on_close_clicked(self):
-        """Properly close the application when close button is clicked"""
         self.closeRequested.emit()
 
     def set_player_data(self, data):
@@ -104,14 +102,22 @@ class PlayerCardPage(QWidget):
         self.current_name = data.get("nickname", "")
         self.name_label.setText(self.current_name)
         
-        # Загружаем аватар если есть URL
         avatar_url = data.get("avatar", "")
         if avatar_url:
             self.avatar.load_image(avatar_url)
         else:
-            self.avatar.setText("🎮")  # плейсхолдер
+            self.avatar.setText("🎮")
         
-        self._animate_cards_sequential(data)
+        cards_data = {
+            "matches": data.get("matches", 0),
+            "wins": data.get("wins", 0),
+            "losses": data.get("losses", 0),
+            "winrate": data.get("winrate", "0%"),
+            "hero": data.get("hero", "No data"),
+            "region": data.get("region", "Unknown"),
+        }
+        
+        self._animate_cards_sequential(cards_data)
     
     def _animate_cards_sequential(self, data):
         """Animate cards appearing one by one"""
@@ -122,7 +128,8 @@ class PlayerCardPage(QWidget):
                 return
             
             key, card = cards_list[index]
-            card.set_value(data.get(key, "---"))
+            value = data.get(key, "---")
+            card.set_value(value)
             QTimer.singleShot(60, lambda: animate_card(index + 1))
         
         animate_card()

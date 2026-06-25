@@ -1,6 +1,7 @@
+# app/backend/schemas/player.py
+
 from pydantic import BaseModel, computed_field
 from typing import Optional
-
 
 class PlayerSchemas(BaseModel):
     steamAccountId: Optional[int] = None
@@ -10,6 +11,7 @@ class PlayerSchemas(BaseModel):
     matchCount: Optional[int] = None
     winCount: Optional[int] = None
     behaviorScore: Optional[int] = None
+    top_hero: Optional[str] = None
     
     @computed_field
     @property

@@ -9,6 +9,10 @@ async def get_player(steam_id: int):
     result = await Statz_service.get_by_id(steam_id)
     if not result:
         raise HTTPException(status_code=404, detail="Player not found")
+    
+    top_hero = await Statz_service.get_best_hero(steam_id)
+    result["top_hero"] = top_hero
+    
     return result
 
 @router.post("/test/{steam_id:int}", response_model=PlayerSchemas)
@@ -16,4 +20,8 @@ async def test(steam_id: int):
     result = await Statz_service.get_by_id(steam_id)
     if not result:
         raise HTTPException(status_code=404, detail="Player not found")
+    
+    top_hero = await Statz_service.get_best_hero(steam_id)
+    result["top_hero"] = top_hero
+    
     return result
